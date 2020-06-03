@@ -32,4 +32,4 @@ zzz
 
 Install `ruby` command.
 
-Ruby version >= 2.6.3 (maybe more older versions)
+Ruby version >= 2.6.3 (maybe older versions)
