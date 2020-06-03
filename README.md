@@ -8,9 +8,15 @@ $ cat regex.txt
 hogehoge_nyan
 hohho_nyan
 
+# numbered capture
 $ cat regex.txt | scan -p "(.+?)_(.+)" {1},{2}
 hogehoge,nyan
 hohho,nyan
+
+# named capture
+$ cat regex.txt | scan -p "(?<left>.+?)_(?<right>.+)" {left}:{right}
+hogehoge:nyan
+hohho:nyan
 
 # by delimiter
 $ cat hoge.csv
