@@ -1,6 +1,7 @@
 #! /usr/bin/env ruby
 
-require 'optparse'
+require "optparse"
+require "stringio"
 
 class Format
   def self.build(template_string)
@@ -8,13 +9,31 @@ class Format
   end
 
   def initialize(template_string)
-    @template_string = template_string
+    remain = template_string
+    @sseq = []
+    while m = remain.match(/^(.*?)\{(.+?)\}(.*)$/)
+      @sseq.push(m[1])
+      capture = m[2].match?(/\d+/) ? m[2].to_i : m[2]
+      @sseq.push(Placeholder.new(capture: capture))
+      remain = m[3]
+    end
+    @sseq.push(remain)
   end
 
   def render(params)
-    parened_params = params.map { |k, v| ["{#{k}}", v] }.to_h
-    @template_string.gsub(/\{(.+?)\}/) { |name| parened_params[name] }
+    @sseq.map do |s|
+      case s
+      when String
+        s
+      when Placeholder
+        params[s.capture]
+      else
+        raise "Unexpected object: #{s.inspect}"
+      end
+    end.join("")
   end
+
+  class Placeholder < Struct.new(:capture, keyword_init: true); end
 end
 
 class Scanner
@@ -24,22 +43,22 @@ class Scanner
     regex = nil
     delimiter = nil
     parser = OptionParser.new do |opts|
-      opts.on('-p [PATTERN]', 'specify regexp') do |passed_regex|
+      opts.on("-p [PATTERN]", "specify regexp") do |passed_regex|
         regex = passed_regex
       end
-      opts.on('-d [DELIMITER]', 'specify delimiter') do |passed_delimiter|
+      opts.on("-d [DELIMITER]", "specify delimiter") do |passed_delimiter|
         delimiter = passed_delimiter
       end
     end
 
-    output_format = format_builder.build(parser.parse(args).join(' '))
+    output_format = format_builder.build(parser.parse(args).join(" "))
     matcher = if regex
-                RegexpMatcher.new(regexp: Regexp.compile(regex))
-              elsif delimiter
-                DelimiterMatcher.new(delimiter: delimiter)
-              else
-                DelimiterMatcher.new(delimiter: '\s+')
-              end
+        RegexpMatcher.new(regexp: regex)
+      elsif delimiter
+        DelimiterMatcher.new(delimiter: delimiter)
+      else
+        DelimiterMatcher.new(delimiter: '\s+')
+      end
 
     Scanner.new(matcher: matcher, output_format: output_format)
   end
@@ -50,12 +69,16 @@ class Scanner
   end
 
   def scan(reader: $stdin, writer: $stdout)
-    reader.read.lines.map(&:strip).each do |line|
+    output = StringIO.new
+    reader
+      .readlines(chomp: true)
+      .each do |line|
       matched_data = matcher.match(line)
       next unless matched_data
-      formatted_text = output_format.render(matched_data)
-      writer.puts(formatted_text)
+      text = output_format.render(matched_data)
+      output.puts(text)
     end
+    writer.puts(output.string)
   end
 end
 
@@ -75,18 +98,14 @@ end
 
 class RegexpMatcher
   def initialize(regexp:)
-    @regexp = regexp
+    @regexp = Regexp.compile regexp
   end
 
   def match(line)
-    matched_data = @regexp.match(line)
-    return unless matched_data
-    format_params = {}
-    matched_data.to_a.each.with_index do |capture, index|
-      format_params[index] = capture
-    end
-    format_params.merge!(matched_data.named_captures)
+    @regexp.match(line)
   end
 end
 
-Scanner.build.scan
+if __FILE__ == $0
+  Scanner.build.scan
+end
