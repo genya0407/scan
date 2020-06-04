@@ -53,7 +53,7 @@ class Scanner
 
     output_format = format_builder.build(parser.parse(args).join(' '))
     matcher = if regex
-                RegexpMatcher.new(regexp: Regexp.compile(regex))
+                RegexpMatcher.new(regexp: regex)
               elsif delimiter
                 DelimiterMatcher.new(delimiter: delimiter)
               else
@@ -98,7 +98,7 @@ end
 
 class RegexpMatcher
   def initialize(regexp:)
-    @regexp = regexp
+    @regexp = Regexp.compile regexp
   end
 
   def match(line)
