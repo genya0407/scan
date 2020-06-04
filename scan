@@ -9,11 +9,16 @@ class Format
 
   def initialize(template_string)
     @template_string = template_string
+    @captures = @template_string.scan(/\{(.+?)\}/).flatten.uniq
   end
 
   def render(params)
-    parened_params = params.map { |k, v| ["{#{k}}", v] }.to_h
-    @template_string.gsub(/\{(.+?)\}/) { |name| parened_params[name] }
+    params = params.map { |k,v| [k.to_s, v] }.to_h # convert key to string
+    result = @template_string.dup
+    @captures.each do |capture|
+      result.gsub!("{#{capture}}", params[capture])
+    end
+    result
   end
 end
 
