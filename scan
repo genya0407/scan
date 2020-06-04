@@ -13,15 +13,14 @@ class Format
     @sseq = []
     while m = remain.match(/^(.*?)\{(.+?)\}(.*)$/)
       @sseq.push(m[1])
-      @sseq.push(Placeholder.new(capture: m[2]))
+      capture = m[2].match?(/\d+/) ? m[2].to_i : m[2]
+      @sseq.push(Placeholder.new(capture: capture))
       remain = m[3]
     end
     @sseq.push(remain)
   end
 
   def render(params)
-    params = params.map { |k,v| [k.to_s, v] }.to_h # keyをstringに
-
     @sseq.map do |s|
       case s
       when String
