@@ -99,4 +99,10 @@ class RegexpMatcher
   end
 end
 
-Scanner.build.scan
+if __FILE__ == $0
+  require 'stackprof'
+
+  StackProf.run(mode: :cpu, out: 'tmp/stackprof-cpu-myapp.dump', interval: 100) do
+    Scanner.build.scan
+  end
+end
