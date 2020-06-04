@@ -102,13 +102,7 @@ class RegexpMatcher
   end
 
   def match(line)
-    matched_data = @regexp.match(line)
-    return unless matched_data
-    format_params = {}
-    matched_data.to_a.each.with_index do |capture, index|
-      format_params[index] = capture
-    end
-    format_params.merge!(matched_data.named_captures)
+    @regexp.match(line)
   end
 end
 
