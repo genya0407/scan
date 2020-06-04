@@ -1,6 +1,7 @@
 #! /usr/bin/env ruby
 
 require 'optparse'
+require 'stringio'
 
 class Format
   def self.build(template_string)
@@ -55,12 +56,16 @@ class Scanner
   end
 
   def scan(reader: $stdin, writer: $stdout)
-    reader.read.lines.map(&:strip).each do |line|
-      matched_data = matcher.match(line)
-      next unless matched_data
-      formatted_text = output_format.render(matched_data)
-      writer.puts(formatted_text)
-    end
+    output = StringIO.new
+    reader
+      .readlines(chomp: true)
+      .each do |line|
+          matched_data = matcher.match(line)
+          next unless matched_data
+          text = output_format.render(matched_data)
+          output.puts(text)
+        end
+    writer.puts(output.string)
   end
 end
 
