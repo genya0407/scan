@@ -26,6 +26,14 @@ xxx,yyy,zzz
 $ cat hoge.csv | scan -d , {3}
 ccc
 zzz
+
+# default delimiter is '\s+'
+$ cat hoge.tsv
+aaa     bbb     ccc
+xxx     yyy     zzz
+$ cat hoge.tsv | scan {2}
+bbb
+yyy
 ```
 
 ## setup
