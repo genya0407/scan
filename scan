@@ -9,18 +9,32 @@ class Format
   end
 
   def initialize(template_string)
-    @template_string = template_string
-    @captures = @template_string.scan(/\{(.+?)\}/).flatten.uniq
+    remain = template_string
+    @sseq = []
+    while m = remain.match(/^(.*?)\{(.+?)\}(.*)$/)
+      @sseq.push(m[1])
+      @sseq.push(Placeholder.new(capture: m[2]))
+      remain = m[3]
+    end
+    @sseq.push(remain)
   end
 
   def render(params)
-    params = params.map { |k,v| [k.to_s, v] }.to_h # convert key to string
-    result = @template_string.dup
-    @captures.each do |capture|
-      result.gsub!("{#{capture}}", params[capture])
-    end
-    result
+    params = params.map { |k,v| [k.to_s, v] }.to_h # keyをstringに
+
+    @sseq.map do |s|
+      case s
+      when String
+        s
+      when Placeholder
+        params[s.capture]
+      else
+        raise "Unexpected object: #{s.inspect}"
+      end
+    end.join('')
   end
+
+  class Placeholder < Struct.new(:capture, keyword_init: true); end
 end
 
 class Scanner
@@ -102,7 +116,7 @@ end
 if __FILE__ == $0
   require 'stackprof'
 
-  StackProf.run(mode: :cpu, out: 'tmp/stackprof-cpu-myapp.dump', interval: 100) do
+  StackProf.run(mode: :cpu, raw: true, out: 'tmp/stackprof-cpu-myapp.dump', interval: 100) do
     Scanner.build.scan
   end
 end
