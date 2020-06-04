@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
-require 'optparse'
-require 'stringio'
+require "optparse"
+require "stringio"
 
 class Format
   def self.build(template_string)
@@ -30,7 +30,7 @@ class Format
       else
         raise "Unexpected object: #{s.inspect}"
       end
-    end.join('')
+    end.join("")
   end
 
   class Placeholder < Struct.new(:capture, keyword_init: true); end
@@ -43,22 +43,22 @@ class Scanner
     regex = nil
     delimiter = nil
     parser = OptionParser.new do |opts|
-      opts.on('-p [PATTERN]', 'specify regexp') do |passed_regex|
+      opts.on("-p [PATTERN]", "specify regexp") do |passed_regex|
         regex = passed_regex
       end
-      opts.on('-d [DELIMITER]', 'specify delimiter') do |passed_delimiter|
+      opts.on("-d [DELIMITER]", "specify delimiter") do |passed_delimiter|
         delimiter = passed_delimiter
       end
     end
 
-    output_format = format_builder.build(parser.parse(args).join(' '))
+    output_format = format_builder.build(parser.parse(args).join(" "))
     matcher = if regex
-                RegexpMatcher.new(regexp: regex)
-              elsif delimiter
-                DelimiterMatcher.new(delimiter: delimiter)
-              else
-                DelimiterMatcher.new(delimiter: '\s+')
-              end
+        RegexpMatcher.new(regexp: regex)
+      elsif delimiter
+        DelimiterMatcher.new(delimiter: delimiter)
+      else
+        DelimiterMatcher.new(delimiter: '\s+')
+      end
 
     Scanner.new(matcher: matcher, output_format: output_format)
   end
@@ -73,11 +73,11 @@ class Scanner
     reader
       .readlines(chomp: true)
       .each do |line|
-          matched_data = matcher.match(line)
-          next unless matched_data
-          text = output_format.render(matched_data)
-          output.puts(text)
-        end
+      matched_data = matcher.match(line)
+      next unless matched_data
+      text = output_format.render(matched_data)
+      output.puts(text)
+    end
     writer.puts(output.string)
   end
 end
