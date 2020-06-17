@@ -43,6 +43,7 @@ class Scanner
     regex = nil
     delimiter = nil
     parser = OptionParser.new do |opts|
+      opts.banner = "Usage: scan [options] OUTPUT_FORMAT"
       opts.on("-p [PATTERN]", "specify regexp") do |passed_regex|
         regex = passed_regex
       end
