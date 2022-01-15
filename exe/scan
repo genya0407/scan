@@ -2,4 +2,4 @@
 
 require "scan"
 
-Scanner.build.scan
+Scan::Scanner.build.scan
