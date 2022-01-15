@@ -1,0 +1,8 @@
+# Auto generated files with errors to ignore.
+# Remove from this list as you refactor files.
+---
+ignore:
+- lib/scan/format.rb:
+  - Style/HashSyntax
+- lib/scan/scanner.rb:
+  - Style/HashSyntax

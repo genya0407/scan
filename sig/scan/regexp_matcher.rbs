@@ -1,0 +1,7 @@
+module Scan
+  class RegexpMatcher
+    include _Matcher
+
+    def initialize: (regexp: String) -> void
+  end
+end

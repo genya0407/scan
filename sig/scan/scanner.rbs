@@ -1,0 +1,9 @@
+module Scan
+  class Scanner
+    def self.build: (?args: Array[String]) -> untyped
+
+    def initialize: (matcher: _Matcher, output_format: Scan::Format) -> void
+
+    def scan: (?reader: IO, ?writer: IO) -> untyped
+  end
+end

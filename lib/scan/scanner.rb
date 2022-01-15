@@ -1,8 +1,6 @@
 module Scan
   class Scanner
-    attr_accessor :matcher, :output_format
-
-    def self.build(args: ARGV, format_builder: Format)
+    def self.build(args: ARGV)
       regex = nil
       delimiter = nil
       parser = OptionParser.new do |opts|
@@ -15,21 +13,21 @@ module Scan
         end
       end
 
-      output_format = format_builder.build(parser.parse(args).join(" "))
+      output_format = Format.new(parser.parse(args).join(" "))
       matcher = if regex
         RegexpMatcher.new(regexp: regex)
       elsif delimiter
-        DelimiterMatcher.new(delimiter:)
+        DelimiterMatcher.new(delimiter: delimiter)
       else
         DelimiterMatcher.new(delimiter: '\s+')
       end
 
-      Scanner.new(matcher:, output_format:)
+      Scanner.new(matcher: matcher, output_format: output_format)
     end
 
     def initialize(matcher:, output_format:)
-      self.matcher = matcher
-      self.output_format = output_format
+      @matcher = matcher
+      @output_format = output_format
     end
 
     def scan(reader: $stdin, writer: $stdout)
@@ -37,10 +35,11 @@ module Scan
       reader
         .readlines(chomp: true)
         .each do |line|
-        matched_data = matcher.match(line)
-        next unless matched_data
-        text = output_format.render(matched_data)
-        output.puts(text)
+        matched_data = @matcher.match(line)
+        if matched_data
+          text = @output_format.render(matched_data)
+          output.puts(text)
+        end
       end
       writer.puts(output.string)
     end

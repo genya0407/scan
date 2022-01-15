@@ -1,0 +1,3 @@
+interface _Matcher
+  def match: (String line) -> Hash[String | Integer, String]
+end
