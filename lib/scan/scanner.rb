@@ -17,14 +17,14 @@ module Scan
 
       output_format = format_builder.build(parser.parse(args).join(" "))
       matcher = if regex
-          RegexpMatcher.new(regexp: regex)
-        elsif delimiter
-          DelimiterMatcher.new(delimiter: delimiter)
-        else
-          DelimiterMatcher.new(delimiter: '\s+')
-        end
+        RegexpMatcher.new(regexp: regex)
+      elsif delimiter
+        DelimiterMatcher.new(delimiter:)
+      else
+        DelimiterMatcher.new(delimiter: '\s+')
+      end
 
-      Scanner.new(matcher: matcher, output_format: output_format)
+      Scanner.new(matcher:, output_format:)
     end
 
     def initialize(matcher:, output_format:)

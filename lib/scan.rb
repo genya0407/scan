@@ -3,7 +3,6 @@
 require "optparse"
 require "stringio"
 
-require_relative "scan/version"
 require_relative "scan/delimiter_matcher"
 require_relative "scan/format"
 require_relative "scan/regexp_matcher"
