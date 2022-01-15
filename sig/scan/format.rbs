@@ -1,0 +1,13 @@
+module Scan
+  class Format
+    def initialize: (String template_string) -> void
+
+    def render: (Hash[String | Integer, String] params) -> String
+
+    class Placeholder
+      def initialize: (capture: String | Integer) -> void
+
+      def capture: -> (String | Integer)
+    end
+  end
+end

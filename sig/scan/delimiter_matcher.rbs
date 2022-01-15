@@ -1,0 +1,7 @@
+module Scan
+  class DelimiterMatcher
+    include _Matcher
+
+    def initialize: (delimiter: String) -> void
+  end
+end
