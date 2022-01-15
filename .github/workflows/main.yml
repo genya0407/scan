@@ -29,5 +29,5 @@ jobs:
     - name: integration test
       run: |
         gem install specific_install
-        gem specific_install -l https://github.com/${GITHUB_REPOSITORY} -b ${GITHUB_SHA}
+        gem specific_install -l https://github.com/${GITHUB_REPOSITORY} -b $(git rev-list HEAD -n 1)
         scan --help
