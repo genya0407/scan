@@ -25,3 +25,8 @@ jobs:
         bundler-cache: true
     - name: Run the default task
       run: bundle exec rake
+    - name: integration test
+      run: |
+        gem install specific_install
+        gem specific_install -l https://github.com/${GITHUB_REPOSITORY} -b ${GITHUB_SHA}
+        scan --help
