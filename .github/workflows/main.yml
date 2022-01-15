@@ -28,6 +28,6 @@ jobs:
       run: bundle exec rake
     - name: integration test
       run: |
-        gem install specific_install
-        gem specific_install -l https://github.com/${GITHUB_REPOSITORY} -b $(git rev-list HEAD -n 1)
+        gem build -o scan-test.gem
+        gem install ./scan-test.gem
         scan --help
